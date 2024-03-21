@@ -2,11 +2,11 @@ import { useState , useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer , toast } from 'react-toastify';
 import axios from 'axios';
-import { registerRoute } from '../utils/apiRoutes';
+import { loginRoute } from '../utils/apiRoutes';
 import backgroundimage from '../assets/bg-3.jpg';
 import logo from '../assets/logo.png';
 
-function Register(props) {
+function Login(props) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({});
     const toastOptions = {
@@ -26,13 +26,14 @@ function Register(props) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (handleValidation()) {
-            const { username, email, password } = formData;
-            const { data } = await axios.post(registerRoute, {
-                username,
+            const { email, password } = formData;
+            const { data } = await axios.post(loginRoute, {
                 email,
                 password
             });
+            
             if (data.status === false) {
+                console.log(data.message);
                 toast.error(data.message, toastOptions);
             }
             if (data.status === true) {
@@ -43,14 +44,9 @@ function Register(props) {
     };
 
     const handleValidation = () => {
-        const { password, confirmPassword, email, username } = formData;
+        const { password, email } = formData;
 
-        if (password !== confirmPassword) {
-            toast.error("password and confirm password should be same", toastOptions);
-            return false;
-        }
-
-        if (!username || !email || !password) {
+        if (!email || !password) {
             toast.error("Missing required fields", toastOptions);
             return false;
         }
@@ -70,15 +66,7 @@ function Register(props) {
                         <img src={logo} alt="logo" className="h-20" />
                         <h1 className="text-white uppercase">Bit-Chat</h1>
                     </div>
-                    <form className="flex flex-col gap-8 p-12" onSubmit={handleSubmit}>
-                        <input
-                            type="text"
-                            placeholder="Username"
-                            name="username"
-                            value={formData.username || ''}
-                            onChange={handleChanges}
-                            className="bg-transparent px-4 py-2 border border-purple-500 rounded focus:border-purple-700 focus:outline-none text-white"
-                        />
+                    <form className="flex flex-col gap-8  p-12" onSubmit={handleSubmit}>
                         <input
                             type="email"
                             placeholder="Email"
@@ -95,18 +83,9 @@ function Register(props) {
                             onChange={handleChanges}
                             className="bg-transparent px-4 py-2 border border-purple-500 rounded focus:border-purple-700 focus:outline-none text-white"
                         />
-                        <input
-                            type="password"
-                            placeholder="Confirm Password"
-                            name="confirmPassword"
-                            value={formData.confirmPassword || ''}
-                            onChange={handleChanges}
-                            className="bg-transparent px-4 py-2 border border-purple-500 rounded focus:border-purple-700 focus:outline-none text-white"
-                        />
+                        <button type="submit" className="bg-purple-700 text-white px-6 py-3 font-bold rounded hover:bg-purple-600 transition duration-300">Login</button>
 
-                        <button type="submit" className="bg-purple-700 text-white px-6 py-3 font-bold rounded hover:bg-purple-600 transition duration-300">Create User</button>
-
-                        <span className="text-white uppercase">Already have an account? <Link to="/login" className="font-bold">Login</Link></span>
+                        <span className="text-white uppercase">Don't have an account? <Link to="/register" className="font-bold">Register</Link></span>
                     </form>
                 </div>
             </div>
@@ -115,4 +94,4 @@ function Register(props) {
     );
 }
 
-export default Register;
+export default Login;
