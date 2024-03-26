@@ -27,3 +27,32 @@ export const userRegister = async (req:Req ,res:Res ,Next:Next) =>{
         Next(error); // Pass the error to the error handling middleware
     }
 }
+
+
+export const userLogin = async (req:Req , res:Res ,next:Next) =>{
+    try {
+        const {email ,password} = req.body
+
+        
+
+        if(!email || !password){
+            return res.json({message:'please fill all the fields' , status: false})
+        }
+        
+        const user = await User.findOne({email})
+
+       
+
+        const passwordCheck = await bcrypt.compare(password , user.password)
+        
+        if(!user){
+            return res.json({message:'invalid credentials', status:false})
+
+        }
+        if(user && passwordCheck){
+            return res.json({status:true ,user})
+        }
+    } catch (error) {
+        next(error)
+    }
+}
