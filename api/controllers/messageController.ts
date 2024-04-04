@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import messageModel, { IMessageDocument } from "../models/messageModel"; // Assuming you have a TypeScript model for Message
+import messageModel from "../models/messageModel"; // Assuming you have a TypeScript model for Message
 
 interface IMessageRequestBody {
     from: string;
@@ -27,7 +27,7 @@ export const addMessage = async (req: Request<any, any, IMessageRequestBody>, re
     }
 };
 
-export const getAllMessage = async (req: Request<any, any, any, { from: string; to: string }>, res: Response<IProjectMessage[]>, next: NextFunction) => {
+export const getAllMessage = async (req: Request<any, any, { from: string; to: string }>, res: Response<IProjectMessage[]>, next: NextFunction) => {
     try {
         const { from, to } = req.body;
         const messages = await messageModel.find({
@@ -36,7 +36,7 @@ export const getAllMessage = async (req: Request<any, any, any, { from: string; 
             },
         })
         .sort({ updatedAt: 1 });
-        const projectMessages: IProjectMessage[] = messages.map((msg: IMessageDocument) => ({
+        const projectMessages: IProjectMessage[] = messages.map((msg:any) => ({
             fromSelf: msg.sender.toString() === from,
             message: msg.message.text,
         }));
